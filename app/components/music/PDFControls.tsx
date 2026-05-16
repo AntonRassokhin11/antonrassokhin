@@ -33,32 +33,38 @@ export default function PDFControls({
       <button
         onClick={onBack}
         className="
-          h-11
-          px-5
-          rounded-xl
+          h-9
+          px-4
+          rounded-lg
           bg-[#0B1F3B]
           text-white
+          text-sm
           font-semibold
+          shadow-lg
           hover:opacity-90
           transition
         "
       >
-        {"<"} Zurück
+        Zurück
       </button>
 
       {/* PAGE CONTROLS */}
       <div className="flex items-center gap-4">
 
+        {/* PREV */}
         <button
           onClick={prevPage}
           disabled={isFirst}
           className={`
-            w-11
-            h-11
-            rounded-xl
+            w-9
+            h-9
+            rounded-lg
             text-white
-            text-xl
+            text-base
             font-bold
+            flex
+            items-center
+            justify-center
             transition
             ${
               isFirst
@@ -70,20 +76,25 @@ export default function PDFControls({
           ←
         </button>
 
+        {/* PAGE */}
         <div className="text-sm font-medium">
           Seite {currentPage} / {totalPages}
         </div>
 
+        {/* NEXT */}
         <button
           onClick={nextPage}
           disabled={isLast}
           className={`
-            w-11
-            h-11
-            rounded-xl
+            w-9
+            h-9
+            rounded-lg
             text-white
-            text-xl
+            text-base
             font-bold
+            flex
+            items-center
+            justify-center
             transition
             ${
               isLast

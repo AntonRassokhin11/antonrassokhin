@@ -15,7 +15,7 @@ export default function Sidebar({
   const openTimeout = useRef<NodeJS.Timeout | null>(null);
   const closeTimeout = useRef<NodeJS.Timeout | null>(null);
 
-  // OPEN WITH DELAY
+  // OPEN
   const handleEnter = () => {
 
     if (closeTimeout.current) {
@@ -27,7 +27,7 @@ export default function Sidebar({
     }, 180);
   };
 
-  // CLOSE WITH DELAY
+  // CLOSE
   const handleLeave = () => {
 
     if (openTimeout.current) {
@@ -41,6 +41,7 @@ export default function Sidebar({
 
   useEffect(() => {
     return () => {
+
       if (openTimeout.current) {
         clearTimeout(openTimeout.current);
       }
@@ -52,107 +53,104 @@ export default function Sidebar({
   }, []);
 
   return (
+    <div
+      onMouseEnter={handleEnter}
+      onMouseLeave={handleLeave}
+      className={`
+        fixed
+        left-5
+        top-[145px]
+        z-50
+        transition-all
+        duration-500
+        ${
+          open
+            ? "w-[320px]"
+            : "w-[90px]"
+        }
+      `}
+      style={{
+        height: "calc(100vh - 165px)",
+      }}
+    >
 
-    <>
-      {/* HOVER ZONE */}
+      {/* SIDEBAR */}
       <div
-        onMouseEnter={handleEnter}
-        onMouseLeave={handleLeave}
         className={`
-          fixed
-          left-5
-          top-[175px]
-          z-40
+          h-full
+          rounded-[16px]
+          border
+          border-[#E5E5E0]
+          bg-[#0A0A0A]
+          shadow-2xl
           transition-all
           duration-500
+          overflow-hidden
           ${
             open
-              ? "w-[320px]"
+              ? "w-[240px]"
               : "w-[90px]"
           }
         `}
-        style={{
-          height: "calc(100vh - 195px)",
-        }}
       >
 
-        {/* SIDEBAR */}
-        <div
-          className={`
-            h-full
-            rounded-[16px]
-            border
-            border-white
-            bg-[#0A0A0A]
-            shadow-2xl
-            transition-all
-            duration-500
-            overflow-hidden
-            ${
-              open
-                ? "w-[240px]"
-                : "w-[90px]"
-            }
-          `}
-        >
+        <div className="p-6">
 
-          <div className="p-6">
+          {/* MENU */}
+          <div
+            className="
+              text-white
+              text-sm
+              font-bold
+              tracking-[0.22em]
+              text-center
+              pl-[3px]
+            "
+          >
+            MENÜ
+          </div>
 
-            {/* MENU */}
-            <div
-              className="
-                text-white
-                text-sm
-                font-bold
-                tracking-[0.28em]
-                text-center
-              "
-            >
-              MENÜ
-            </div>
+          {/* LINKS */}
+          <div
+            className={`
+              mt-10
+              space-y-6
+              whitespace-nowrap
+              transition-all
+              duration-300
+              ${
+                open
+                  ? "opacity-100 translate-x-0"
+                  : "opacity-0 -translate-x-2"
+              }
+            `}
+          >
 
-            {/* LINKS */}
-            <div
-              className={`
-                mt-10
-                space-y-6
-                whitespace-nowrap
-                transition-all
-                duration-300
-                ${
-                  open
-                    ? "opacity-100 translate-x-0"
-                    : "opacity-0 -translate-x-2"
-                }
-              `}
-            >
-
-              {[
-                "Beliebte",
-                "Letzte Herausgaben",
-                "Über mich",
-                "Kontakt",
-              ].map((item) => (
-                <div
-                  key={item}
-                  className="
-                    text-white
-                    cursor-pointer
-                    hover:text-gray-300
-                    transition
-                  "
-                >
-                  {item}
-                </div>
-              ))}
-
-            </div>
+            {[
+              "Beliebte",
+              "Letzte Herausgaben",
+              "Über mich",
+              "Kontakt",
+            ].map((item) => (
+              <div
+                key={item}
+                className="
+                  text-white
+                  cursor-pointer
+                  hover:text-gray-300
+                  transition
+                "
+              >
+                {item}
+              </div>
+            ))}
 
           </div>
 
         </div>
 
       </div>
-    </>
+
+    </div>
   );
 }
