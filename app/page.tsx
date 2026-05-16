@@ -1,7 +1,14 @@
 "use client";
 
 import { useState } from "react";
-import { Search, ChevronLeft, ChevronRight } from "lucide-react";
+
+import Header from "./components/layout/Header";
+import Sidebar from "./components/layout/Sidebar";
+import MainLayout from "./components/layout/MainLayout";
+
+import PDFControls from "./components/music/PDFControls";
+import PDFViewer from "./components/music/PDFViewer";
+import PieceInfoPanel from "./components/music/PieceInfoPanel";
 
 const categories = [
   "Piano",
@@ -14,16 +21,19 @@ const pieces: Record<string, string[]> = {
   Piano: [
     "Moonlight Sonata",
     "Fantaisie Impromptu",
-    "Chopin Nocturne",
+    "Nocturne Op.9",
   ],
+
   Toccata: [
     "Toccata in D Minor",
     "BWV 565",
   ],
+
   "Symphonie Orchester": [
-    "Symphony No. 5",
-    "Symphony No. 40",
+    "Symphony No.5",
+    "Symphony No.40",
   ],
+
   Kammerorchester: [
     "Divertimento",
     "String Quartet",
@@ -31,191 +41,110 @@ const pieces: Record<string, string[]> = {
 };
 
 export default function Page() {
-  const [sidebarOpen, setSidebarOpen] = useState(false);
 
-  const [view, setView] = useState<
-    "home" | "category" | "piece"
-  >("home");
+  const [sidebarOpen, setSidebarOpen] =
+    useState(false);
 
   const [selectedCategory, setSelectedCategory] =
-    useState("");
+    useState<string | null>(null);
 
   const [selectedPiece, setSelectedPiece] =
-    useState("");
+    useState<string | null>(null);
 
-  const [page, setPage] = useState(1);
+  const [currentPage, setCurrentPage] =
+    useState(1);
 
-  const totalPages = 4;
+  const totalPages = 5;
+
+  // HOME
+  const goHome = () => {
+    setSelectedCategory(null);
+    setSelectedPiece(null);
+    setCurrentPage(1);
+  };
+
+  // BACK
+  const goBack = () => {
+
+    if (selectedPiece) {
+      setSelectedPiece(null);
+      setCurrentPage(1);
+      return;
+    }
+
+    if (selectedCategory) {
+      setSelectedCategory(null);
+    }
+  };
+
+  // NEXT PAGE
+  const nextPage = () => {
+    if (currentPage < totalPages) {
+      setCurrentPage(currentPage + 1);
+    }
+  };
+
+  // PREV PAGE
+  const prevPage = () => {
+    if (currentPage > 1) {
+      setCurrentPage(currentPage - 1);
+    }
+  };
 
   return (
-    <div className="min-h-screen bg-[#F7F7F5] p-5 font-sans">
+    <div className="relative min-h-screen bg-[#CFCFCA]">
 
       {/* HEADER */}
-      <div
-        className={`
-          mx-auto
-          rounded-[28px]
-          border border-white
-          bg-[#0B1F3B]
-          shadow-sm
-          transition-all
-          duration-500
-          ${
-            view === "piece"
-              ? "h-[110px]"
-              : "h-[150px]"
-          }
-        `}
-      >
-        <div className="h-full flex items-center justify-between px-10">
+      <div className="fixed top-5 left-5 right-5 z-40">
 
-          {/* LOGO */}
-          <button
-            onClick={() => setView("home")}
-            className="text-white text-4xl font-bold tracking-wide hover:opacity-80 transition"
-          >
-            AR
-          </button>
-
-          {/* SEARCH */}
-          <div className="relative w-[500px]">
-
-            <input
-              className="
-                w-full
-                h-12
-                rounded-full
-                bg-white
-                px-14
-                text-black
-                outline-none
-                border
-                border-transparent
-                focus:border-black
-                transition-all
-              "
-            />
-
-            <Search
-              size={20}
-              className="
-                absolute
-                left-5
-                top-1/2
-                -translate-y-1/2
-                text-gray-500
-              "
-            />
-
-          </div>
-
-          <div className="w-[60px]" />
-
+        <div onClick={goHome}>
+          <Header compact={selectedPiece !== null} />
         </div>
+
       </div>
 
-      {/* BODY */}
-      <div className="flex gap-5 mt-5">
+      {/* SIDEBAR */}
+      <Sidebar
+        open={sidebarOpen}
+        setOpen={setSidebarOpen}
+      />
 
-        {/* SIDEBAR */}
-        <div
-          onMouseEnter={() => setSidebarOpen(true)}
-          onMouseLeave={() => setSidebarOpen(false)}
-          className={`
-            rounded-[28px]
-            border
-            border-white
-            bg-[#0A0A0A]
-            shadow-sm
-            transition-all
-            duration-500
-            overflow-hidden
-            ${
-              sidebarOpen
-                ? "w-[240px]"
-                : "w-[90px]"
-            }
-          `}
-          style={{
-            height: "calc(100vh - 210px)",
-          }}
-        >
+      {/* CONTENT */}
+      <div className="pt-[160px]">
 
-          <div className="p-6">
+        <MainLayout sidebarOpen={sidebarOpen}>
 
-            {/* MENU TITLE */}
-            <div className="text-white text-sm tracking-[0.3em]">
-              MENÜ
-            </div>
+          {/* LEVEL 1 */}
+          {!selectedCategory && !selectedPiece && (
 
-            {/* LINKS */}
-            <div
-              className={`
-                mt-10
-                space-y-6
-                transition-all
-                duration-300
-                ${
-                  sidebarOpen
-                    ? "opacity-100"
-                    : "opacity-0"
-                }
-              `}
-            >
+            <div className="p-10">
 
-              {[
-                "Beliebte",
-                "Letzte Herausgaben",
-                "Über mich",
-                "Kontakt",
-              ].map((item) => (
-                <div
-                  key={item}
-                  className="
-                    text-white
-                    cursor-pointer
-                    hover:text-gray-300
-                    transition
-                  "
-                >
-                  {item}
-                </div>
-              ))}
+              {/* TITLE */}
+              <div className="text-5xl font-bold mb-12">
+                Kategorien
+              </div>
 
-            </div>
+              {/* CATEGORY BUTTONS */}
+              <div className="flex gap-5 flex-wrap">
 
-          </div>
-        </div>
-
-        {/* MAIN CONTENT */}
-        <div className="flex-1">
-
-          {/* HOME */}
-          {view === "home" && (
-            <div className="animate-fade">
-
-              <div className="grid grid-cols-2 gap-6">
-
-                {categories.map((cat) => (
+                {categories.map((item) => (
                   <button
-                    key={cat}
-                    onClick={() => {
-                      setSelectedCategory(cat);
-                      setView("category");
-                    }}
+                    key={item}
+                    onClick={() =>
+                      setSelectedCategory(item)
+                    }
                     className="
-                      h-[170px]
-                      rounded-[30px]
-                      bg-white
-                      border
-                      border-gray-100
-                      text-2xl
-                      hover:scale-[1.01]
-                      hover:shadow-sm
-                      transition-all
+                      px-8
+                      h-14
+                      rounded-lg
+                      bg-[#0B1F3B]
+                      text-white
+                      font-medium
+                      hover:opacity-90
+                      transition
                     "
                   >
-                    {cat}
+                    {item}
                   </button>
                 ))}
 
@@ -224,201 +153,106 @@ export default function Page() {
             </div>
           )}
 
-          {/* CATEGORY PAGE */}
-          {view === "category" && (
-            <div className="bg-white rounded-[30px] p-10 animate-fade">
+          {/* LEVEL 2 */}
+          {selectedCategory && !selectedPiece && (
 
+            <div className="p-10">
+
+              {/* BACK */}
               <button
-                onClick={() => setView("home")}
-                className="mb-8 text-gray-500 hover:text-black transition"
+                onClick={goBack}
+                className="
+                  mb-8
+                  h-11
+                  px-5
+                  rounded-lg
+                  bg-[#0B1F3B]
+                  text-white
+                  font-semibold
+                  shadow-lg
+                "
               >
-                ← Zurück
+                {"<"} Zurück
               </button>
 
-              <h1 className="text-4xl mb-10 font-semibold">
+              {/* TITLE */}
+              <div className="text-5xl font-bold mb-12">
                 {selectedCategory}
-              </h1>
+              </div>
 
-              <div className="space-y-5">
+              {/* LIST */}
+              <div
+                className="
+                  rounded-[16px]
+                  bg-[#F8F8F6]
+                  border
+                  border-[#E5E5E0]
+                  shadow-xl
+                  p-8
+                "
+              >
 
-                {(pieces[selectedCategory] || []).map(
-                  (piece) => (
-                    <div
-                      key={piece}
-                      onClick={() => {
-                        setSelectedPiece(piece);
-                        setView("piece");
-                      }}
-                      className="
-                        text-xl
-                        cursor-pointer
-                        hover:translate-x-1
-                        transition-all
-                      "
-                    >
-                      {piece}
-                    </div>
-                  )
-                )}
+                <div className="space-y-5">
+
+                  {(pieces[selectedCategory] || []).map(
+                    (piece) => (
+                      <div
+                        key={piece}
+                        onClick={() =>
+                          setSelectedPiece(piece)
+                        }
+                        className="
+                          text-lg
+                          cursor-pointer
+                          hover:translate-x-1
+                          transition-all
+                          duration-300
+                        "
+                      >
+                        {piece}
+                      </div>
+                    )
+                  )}
+
+                </div>
 
               </div>
 
             </div>
           )}
 
-          {/* PIECE PAGE */}
-          {view === "piece" && (
-            <div className="flex gap-6 animate-fade">
+          {/* LEVEL 3 */}
+          {selectedPiece && (
 
-              {/* PDF */}
-              <div className="flex-1">
+            <div className="p-10">
 
-                <div className="bg-white rounded-[30px] p-8">
+              {/* PDF CONTROLS */}
+              <PDFControls
+                onBack={goBack}
+                currentPage={currentPage}
+                totalPages={totalPages}
+                nextPage={nextPage}
+                prevPage={prevPage}
+              />
 
-                  <button
-                    onClick={() => setView("category")}
-                    className="
-                      text-gray-500
-                      hover:text-black
-                      transition
-                      mb-6
-                    "
-                  >
-                    ← Zurück
-                  </button>
+              {/* PART 1 */}
+              <div className="flex gap-8">
 
-                  <h1 className="text-4xl font-bold mb-8">
-                    {selectedPiece}
-                  </h1>
+                {/* PDF */}
+                <PDFViewer />
 
-                  {/* PDF PLACEHOLDER */}
-                  <div
-                    className="
-                      h-[800px]
-                      rounded-[20px]
-                      bg-[#EFEFEF]
-                      flex
-                      items-center
-                      justify-center
-                      text-gray-400
-                    "
-                  >
-                    PDF VIEWER
-                  </div>
+                {/* INFO */}
+                <PieceInfoPanel />
 
-                  {/* PDF NAV */}
-                  <div className="flex justify-center gap-10 mt-8">
-
-                    <button
-                      disabled={page === 1}
-                      onClick={() =>
-                        setPage(page - 1)
-                      }
-                      className={`
-                        transition
-                        ${
-                          page === 1
-                            ? "opacity-30"
-                            : "hover:scale-110"
-                        }
-                      `}
-                    >
-                      <ChevronLeft size={34} />
-                    </button>
-
-                    <button
-                      disabled={page === totalPages}
-                      onClick={() =>
-                        setPage(page + 1)
-                      }
-                      className={`
-                        transition
-                        ${
-                          page === totalPages
-                            ? "opacity-30"
-                            : "hover:scale-110"
-                        }
-                      `}
-                    >
-                      <ChevronRight size={34} />
-                    </button>
-
-                  </div>
-
-                </div>
-              </div>
-
-              {/* INFO PANEL */}
-              <div className="w-[320px]">
-
-                <div className="bg-white rounded-[30px] p-8">
-
-                  <div className="mb-8">
-                    <div className="text-gray-400 text-sm mb-1">
-                      Komponist
-                    </div>
-
-                    <div className="text-xl">
-                      Ludwig van Beethoven
-                    </div>
-                  </div>
-
-                  <div className="mb-8">
-                    <div className="text-gray-400 text-sm mb-1">
-                      Überarbeiter
-                    </div>
-
-                    <div className="text-xl">
-                      Anton Rassokhin
-                    </div>
-                  </div>
-
-                  <div className="mb-8">
-                    <div className="text-gray-400 text-sm mb-1">
-                      Thematik
-                    </div>
-
-                    <div className="text-xl">
-                      Klassische Klaviermusik
-                    </div>
-                  </div>
-
-                  <div className="mb-10">
-                    <div className="text-gray-400 text-sm mb-2">
-                      Beschreibung
-                    </div>
-
-                    <div className="leading-relaxed text-[15px]">
-                      Minimalistisch überarbeitete
-                      Ausgabe mit angepasster
-                      Dynamik und optimierter
-                      Lesbarkeit.
-                    </div>
-                  </div>
-
-                  {/* DOWNLOAD */}
-                  <button
-                    className="
-                      w-full
-                      h-12
-                      rounded-full
-                      bg-[#0B1F3B]
-                      text-white
-                      hover:opacity-90
-                      transition
-                    "
-                  >
-                    PDF herunterladen
-                  </button>
-
-                </div>
               </div>
 
             </div>
           )}
 
-        </div>
+        </MainLayout>
+
       </div>
+
     </div>
   );
 }
